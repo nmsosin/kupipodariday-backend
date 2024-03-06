@@ -62,7 +62,7 @@ export class Wish {
   raised: number;
 
   @ManyToOne(() => User, (user) => user.wishes)
-  owner: string;
+  owner: User;
 
   @Column()
   @Length(1, 1024)

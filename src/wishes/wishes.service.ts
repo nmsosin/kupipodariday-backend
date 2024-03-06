@@ -1,26 +1,84 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  NotFoundException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Wish } from './entities/wish.entity';
+import { Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class WishesService {
-  create(createWishDto: CreateWishDto) {
-    return 'This action adds a new wish';
+  constructor(
+    @InjectRepository(Wish) private wishRepository: Repository<Wish>,
+  ) {}
+  async create(createWishDto: CreateWishDto, owner: User) {
+    return await this.wishRepository.save({
+      ...createWishDto,
+      owner: owner,
+    });
   }
 
-  findAll() {
-    return `This action returns all wishes`;
+  async findAll() {
+    return await this.wishRepository.find({
+      relations: ['owner', 'offers'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} wish`;
+  async findOne(id: number) {
+    return await this.wishRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        owner: {
+          wishes: true,
+          wishlists: true,
+        },
+        offers: {
+          user: true,
+          item: true,
+        },
+      },
+    });
   }
 
-  update(id: number, updateWishDto: UpdateWishDto) {
-    return `This action updates a #${id} wish`;
+  async update(
+    currentUserId: number,
+    id: number,
+    updateWishDto: UpdateWishDto,
+  ) {
+    const wish = await this.findOne(id);
+
+    if (!wish) {
+      throw new NotFoundException(EXCEPTIONS.WISH_NOT_FOUND);
+    }
+
+    if (currentUserId !== wish.owner.id) {
+      throw new ForbiddenException(EXCEPTIONS.ANOTHER_USER);
+    }
+    if (wish.raised > 0 && wish.price !== undefined) {
+      throw new ForbiddenException(EXCEPTIONS.MONEY_COLLECTED);
+    }
+    return await this.wishRepository.update(id, updateWishDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wish`;
+  async remove(currentUserId: number, id: number) {
+    const wish = await this.findOne(id);
+
+    if (!wish) {
+      throw new NotFoundException(EXCEPTIONS.WISH_NOT_FOUND);
+    }
+
+    if (currentUserId !== wish.owner.id) {
+      throw new ForbiddenException(EXCEPTIONS.ANOTHER_USER);
+    }
+    if (wish.raised > 0 && wish.price !== undefined) {
+      throw new ForbiddenException(EXCEPTIONS.MONEY_COLLECTED);
+    }
+    return await this.wishRepository.delete(id);
   }
 }

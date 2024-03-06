@@ -9,6 +9,7 @@ import { User } from './users/entities/user.entity';
 import { Wish } from './wishes/entities/wish.entity';
 import { Wishlist } from './wishlists/entities/wishlist.entity';
 import { Offer } from './offers/entities/offer.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { Offer } from './offers/entities/offer.entity';
       synchronize: true,
     }),
     TypeOrmModule.forFeature([User, Wish, Wishlist, Offer]),
+    ConfigModule.forRoot(),
     UsersModule,
     WishesModule,
     WishlistsModule,

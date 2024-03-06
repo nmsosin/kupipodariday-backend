@@ -18,14 +18,14 @@ export class UsersService {
         createUserDto.username,
       );
       if (usernameExist) {
-        throw new ConflictException(EXCEPTIONS.Conflict);
+        throw new ConflictException(EXCEPTIONS.ALREADY_EXIST);
       }
     }
 
     if (createUserDto.email) {
       const emailExist = await this.findOneByEmail(createUserDto.email);
       if (emailExist) {
-        throw new ConflictException(EXCEPTIONS.Conflict);
+        throw new ConflictException(EXCEPTIONS.ALREADY_EXIST);
       }
     }
 
@@ -62,14 +62,14 @@ export class UsersService {
         updateUserDto.username,
       );
       if (usernameExist) {
-        throw new ConflictException(EXCEPTIONS.Conflict);
+        throw new ConflictException(EXCEPTIONS.ALREADY_EXIST);
       }
     }
 
     if (updateUserDto.email) {
       const emailExist = await this.findOneByEmail(updateUserDto.email);
       if (emailExist) {
-        throw new ConflictException(EXCEPTIONS.Conflict);
+        throw new ConflictException(EXCEPTIONS.ALREADY_EXIST);
       }
     }
 
