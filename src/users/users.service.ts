@@ -1,10 +1,15 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import EXCEPTIONS from '../utils/exceptions';
 
 @Injectable()
 export class UsersService {
@@ -43,7 +48,11 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    return await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
+    }
+    return user;
   }
 
   async findOneByUsername(username: string) {

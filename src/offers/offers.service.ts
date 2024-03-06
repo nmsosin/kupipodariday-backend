@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
+import { WishesService } from '../wishes/wishes.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Offer } from './entities/offer.entity';
+import { Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
+import EXCEPTIONS from '../utils/exceptions';
 
 @Injectable()
 export class OffersService {
-  create(createOfferDto: CreateOfferDto) {
-    return 'This action adds a new offer';
+  constructor(
+    @InjectRepository(Offer)
+    private readonly offersRepository: Repository<Offer>,
+    private readonly wishesService: WishesService,
+  ) {}
+
+  async create(createOfferDto: CreateOfferDto, user: User) {
+    const wishes = await this.wishesService.findOne(createOfferDto.itemId);
+    const wish = await this.wishesService.findOne(wishes.id);
+
+    const restSum = wish.price - wish.raised;
+
+    if (wish.owner.id === user.id) {
+      throw new ForbiddenException(EXCEPTIONS.SELF_PAYMENT);
+    }
+
+    if (createOfferDto.amount > restSum || createOfferDto.amount > wish.price) {
+      throw new ForbiddenException(EXCEPTIONS.EXCEED_PRICE);
+    }
+
+    // TODO: should be done after wishesService
+    await this.wishesService.updateWithRaise(
+      createOfferDto.itemId,
+      wish.raised + createOfferDto.amount,
+    );
+    const newOffer = this.offersRepository.create({
+      ...createOfferDto,
+      user,
+      item: wish,
+    });
+
+    return await this.offersRepository.save(newOffer);
   }
 
-  findAll() {
-    return `This action returns all offers`;
+  async findAll() {
+    return await this.offersRepository.find({
+      relations: ['item', 'user'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} offer`;
-  }
-
-  update(id: number, updateOfferDto: UpdateOfferDto) {
-    return `This action updates a #${id} offer`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} offer`;
+  async findOne(id: number) {
+    const offer = await this.offersRepository.findOneBy({ id });
+    if (!offer) {
+      throw new NotFoundException(EXCEPTIONS.OFFER_NOT_FOUND);
+    }
+    return offer;
   }
 }

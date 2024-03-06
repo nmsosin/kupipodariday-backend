@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import EXCEPTIONS from '../utils/exceptions';
 
 @Injectable()
 export class WishesService {
@@ -46,7 +47,7 @@ export class WishesService {
     });
   }
 
-  async update(
+  async updateOne(
     currentUserId: number,
     id: number,
     updateWishDto: UpdateWishDto,
@@ -64,6 +65,10 @@ export class WishesService {
       throw new ForbiddenException(EXCEPTIONS.MONEY_COLLECTED);
     }
     return await this.wishRepository.update(id, updateWishDto);
+  }
+
+  async updateWithRaise(id: number, raised: number) {
+    return await this.wishRepository.update({ id: id }, { raised });
   }
 
   async remove(currentUserId: number, id: number) {
