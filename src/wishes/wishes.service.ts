@@ -7,7 +7,7 @@ import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import EXCEPTIONS from '../utils/exceptions';
 
@@ -26,6 +26,12 @@ export class WishesService {
   async findAll() {
     return await this.wishRepository.find({
       relations: ['owner', 'offers'],
+    });
+  }
+
+  async findMany(idCollection: number[]) {
+    return this.wishRepository.find({
+      where: { id: In(idCollection) },
     });
   }
 

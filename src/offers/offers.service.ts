@@ -33,7 +33,6 @@ export class OffersService {
       throw new ForbiddenException(EXCEPTIONS.EXCEED_PRICE);
     }
 
-    // TODO: should be done after wishesService
     await this.wishesService.updateWithRaise(
       createOfferDto.itemId,
       wish.raised + createOfferDto.amount,

@@ -26,4 +26,9 @@ export class UsersController {
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
+
+  @Post('find')
+  async findUsers(@Body('query') query: string) {
+    return await this.usersService.findMany(query);
+  }
 }

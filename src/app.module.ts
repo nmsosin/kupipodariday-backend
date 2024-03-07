@@ -10,6 +10,8 @@ import { Wish } from './wishes/entities/wish.entity';
 import { Wishlist } from './wishlists/entities/wishlist.entity';
 import { Offer } from './offers/entities/offer.entity';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { LocalStrategy } from './auth/strategies/local.strategy';
 
 @Module({
   imports: [
@@ -29,8 +31,9 @@ import { ConfigModule } from '@nestjs/config';
     WishesModule,
     WishlistsModule,
     OffersModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [LocalStrategy],
 })
 export class AppModule {}

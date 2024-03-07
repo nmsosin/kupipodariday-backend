@@ -7,7 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import EXCEPTIONS from '../utils/exceptions';
 
@@ -45,6 +45,13 @@ export class UsersService {
 
   async findAll() {
     return await this.userRepository.find();
+  }
+
+  async findMany(query: string) {
+    return await this.userRepository.findBy([
+      { username: Like(`%${query}%`) },
+      { email: Like(`%${query}%`) },
+    ]);
   }
 
   async findOne(id: number) {

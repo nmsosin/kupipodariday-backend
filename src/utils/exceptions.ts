@@ -7,6 +7,9 @@ enum EXCEPTIONS {
   SELF_PAYMENT = 'Нельзя вносить деньги на свои "хотелки"',
   EXCEED_PRICE = 'Взнос превышает оставшуюся стоимость "хотелки"',
   OFFER_NOT_FOUND = 'Заявка не найдена',
+  WISHLIST_NOT_FOUND = 'Этого списка "хотелок" не существует или он был удален',
+  AUTH_FAILED = 'Проверьте логин и пароль',
+  UNAUTHORIZED = 'Требуется авторизация',
 }
 
 export default EXCEPTIONS;
