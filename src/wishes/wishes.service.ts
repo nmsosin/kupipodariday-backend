@@ -65,7 +65,7 @@ export class WishesService {
     }
 
     if (currentUserId !== wish.owner.id) {
-      throw new ForbiddenException(EXCEPTIONS.ANOTHER_USER);
+      throw new ForbiddenException(EXCEPTIONS.ANOTHER_USER_WISH);
     }
     if (wish.raised > 0 && wish.price !== undefined) {
       throw new ForbiddenException(EXCEPTIONS.MONEY_COLLECTED);
@@ -85,7 +85,7 @@ export class WishesService {
     }
 
     if (currentUserId !== wish.owner.id) {
-      throw new ForbiddenException(EXCEPTIONS.ANOTHER_USER);
+      throw new ForbiddenException(EXCEPTIONS.ANOTHER_USER_WISH);
     }
     if (wish.raised > 0 && wish.price !== undefined) {
       throw new ForbiddenException(EXCEPTIONS.MONEY_COLLECTED);

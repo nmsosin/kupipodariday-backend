@@ -53,7 +53,7 @@ export class WishlistsService {
     }
 
     if (user.id !== currentWishlist.owner.id) {
-      throw new ForbiddenException(EXCEPTIONS.ANOTHER_USER);
+      throw new ForbiddenException(EXCEPTIONS.ANOTHER_USER_WISH);
     }
 
     const wishes = await this.wishesService.findMany(updateWishlistDto.items);
@@ -75,7 +75,7 @@ export class WishlistsService {
     }
 
     if (userId !== currentWishlist.owner.id) {
-      throw new ForbiddenException(EXCEPTIONS.ANOTHER_USER);
+      throw new ForbiddenException(EXCEPTIONS.ANOTHER_USER_WISH);
     }
 
     await this.wishlistsRepository.delete(id);

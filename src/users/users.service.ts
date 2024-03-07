@@ -10,12 +10,15 @@ import { User } from './entities/user.entity';
 import { Like, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import EXCEPTIONS from '../utils/exceptions';
+import { Wish } from '../wishes/entities/wish.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Wish)
+    private wishRepository: Repository<Wish>,
   ) {}
   async create(createUserDto: CreateUserDto) {
     if (createUserDto.username) {
@@ -104,5 +107,11 @@ export class UsersService {
 
     await this.userRepository.update(currentUser.id, modifiedUserDto);
     return await this.findOne(id);
+  }
+
+  async findUserWishes(userId: number) {
+    return this.wishRepository.findOneBy({
+      owner: { id: userId },
+    });
   }
 }
