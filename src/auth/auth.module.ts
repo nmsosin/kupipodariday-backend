@@ -12,6 +12,7 @@ import { LocalStrategy } from './strategies/local.strategy';
   imports: [
     UsersModule,
     PassportModule,
+    ConfigModule.forRoot(),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
