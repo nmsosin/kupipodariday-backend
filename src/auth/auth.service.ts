@@ -26,6 +26,7 @@ export class AuthService {
     if (!user || !isPasswordValid) {
       throw new UnauthorizedException(EXCEPTIONS.AUTH_FAILED);
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
     }
 

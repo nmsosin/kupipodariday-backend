@@ -92,4 +92,42 @@ export class WishesService {
     }
     return await this.wishRepository.delete(id);
   }
+
+  async findLastWishes() {
+    return await this.wishRepository.find({
+      order: { createdAt: 'DESC' },
+      take: 40,
+    });
+  }
+
+  async findTopWishes() {
+    return await this.wishRepository.find({
+      order: {
+        copied: 'DESC',
+      },
+      take: 20,
+    });
+  }
+
+  async copyWish(id: number, owner: User) {
+    const wishToCopy = await this.findOne(id);
+
+    if (!wishToCopy) {
+      throw new NotFoundException(EXCEPTIONS.WISH_NOT_FOUND);
+    }
+
+    await this.wishRepository.update(id, {
+      copied: (wishToCopy.copied += 1),
+    });
+
+    await this.create(
+      {
+        ...wishToCopy,
+        raised: 0,
+        owner: owner,
+      },
+      owner,
+    );
+    return {};
+  }
 }
