@@ -56,11 +56,11 @@ export class User {
     unique: true,
   })
   @IsEmail()
-  email;
+  email: string;
 
   @Column()
   @IsString()
-  password;
+  password: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)
   wishes: Wish[];

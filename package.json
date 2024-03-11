@@ -1,8 +1,8 @@
 {
   "name": "kupipodariday-backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Yandex practikum kupipodariday backend project build with nestjs & postgresql",
+  "author": "Nikolai Sosin",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

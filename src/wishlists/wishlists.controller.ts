@@ -17,7 +17,7 @@ import { User } from '../users/entities/user.entity';
 import { AuthUserDto } from '../auth/dto/auth-user.dto';
 
 @UseGuards(JwtGuard)
-@Controller('wishlists')
+@Controller('wishlistlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
 
