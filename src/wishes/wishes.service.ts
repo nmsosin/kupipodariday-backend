@@ -35,10 +35,10 @@ export class WishesService {
     });
   }
 
-  async findOne(id: number) {
-    return await this.wishRepository.findOne({
+  async findOneById(id: number) {
+    const wish = await this.wishRepository.findOne({
       where: {
-        id: id,
+        id: Number(id),
       },
       relations: {
         owner: {
@@ -51,6 +51,12 @@ export class WishesService {
         },
       },
     });
+
+    if (!wish) {
+      throw new NotFoundException(EXCEPTIONS.WISH_NOT_FOUND);
+    }
+
+    return wish;
   }
 
   async updateOne(
@@ -58,7 +64,7 @@ export class WishesService {
     id: number,
     updateWishDto: UpdateWishDto,
   ) {
-    const wish = await this.findOne(id);
+    const wish = await this.findOneById(id);
 
     if (!wish) {
       throw new NotFoundException(EXCEPTIONS.WISH_NOT_FOUND);
@@ -78,7 +84,7 @@ export class WishesService {
   }
 
   async remove(currentUserId: number, id: number) {
-    const wish = await this.findOne(id);
+    const wish = await this.findOneById(id);
 
     if (!wish) {
       throw new NotFoundException(EXCEPTIONS.WISH_NOT_FOUND);
@@ -94,23 +100,35 @@ export class WishesService {
   }
 
   async findLastWishes() {
-    return await this.wishRepository.find({
+    const wishes = await this.wishRepository.find({
       order: { createdAt: 'DESC' },
       take: 40,
     });
+
+    if (!wishes) {
+      throw new NotFoundException(EXCEPTIONS.WISH_NOT_FOUND);
+    }
+
+    return wishes;
   }
 
   async findTopWishes() {
-    return await this.wishRepository.find({
+    const wishes = await this.wishRepository.find({
       order: {
         copied: 'DESC',
       },
       take: 20,
     });
+
+    if (!wishes) {
+      throw new NotFoundException(EXCEPTIONS.WISH_NOT_FOUND);
+    }
+
+    return wishes;
   }
 
   async copyWish(id: number, owner: User) {
-    const wishToCopy = await this.findOne(id);
+    const wishToCopy = await this.findOneById(id);
 
     if (!wishToCopy) {
       throw new NotFoundException(EXCEPTIONS.WISH_NOT_FOUND);

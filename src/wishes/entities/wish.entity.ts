@@ -17,6 +17,7 @@ import {
 } from 'class-validator';
 import { Offer } from '../../offers/entities/offer.entity';
 import { User } from '../../users/entities/user.entity';
+import { Wishlist } from '../../wishlists/entities/wishlist.entity';
 
 @Entity()
 export class Wish {

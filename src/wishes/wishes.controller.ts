@@ -34,7 +34,7 @@ export class WishesController {
   @UseGuards(JwtGuard)
   @Get(':id')
   async findOne(@Param('id') id: number) {
-    return await this.wishesService.findOne(id);
+    return await this.wishesService.findOneById(id);
   }
 
   @UseGuards(JwtGuard)

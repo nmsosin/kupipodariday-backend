@@ -31,10 +31,7 @@ export class WishlistsService {
 
   async findAll() {
     return await this.wishlistsRepository.find({
-      relations: {
-        items: true,
-        owner: true,
-      },
+      relations: ['owner', 'items'],
     });
   }
 
