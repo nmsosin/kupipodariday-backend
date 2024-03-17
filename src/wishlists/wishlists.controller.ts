@@ -54,7 +54,7 @@ export class WishlistsController {
 
   @UseGuards(JwtGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string, @Req() req: AuthUserDto) {
-    return await this.wishlistsService.remove(+id, req.user.id);
+  async remove(@Param('id') id: number, @Req() req: AuthUserDto) {
+    return await this.wishlistsService.remove(id, req.user.id);
   }
 }

@@ -110,7 +110,15 @@ export class UsersService {
   }
 
   async findUserWishes(userId: number) {
-    return this.wishRepository.findOneBy({
+    const currentUser = this.wishRepository.findOneBy({
+      owner: { id: userId },
+    });
+
+    if (!currentUser) {
+      throw new NotFoundException(EXCEPTIONS.USER_NOT_FOUND);
+    }
+
+    return await this.wishRepository.findBy({
       owner: { id: userId },
     });
   }
