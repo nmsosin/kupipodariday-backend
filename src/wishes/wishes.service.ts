@@ -103,6 +103,7 @@ export class WishesService {
     const wishes = await this.wishRepository.find({
       order: { createdAt: 'DESC' },
       take: 40,
+      relations: ['owner', 'offers'],
     });
 
     if (!wishes) {
@@ -118,6 +119,7 @@ export class WishesService {
         copied: 'DESC',
       },
       take: 20,
+      relations: ['owner', 'offers'],
     });
 
     if (!wishes) {
