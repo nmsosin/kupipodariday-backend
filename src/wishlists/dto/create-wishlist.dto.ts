@@ -10,20 +10,21 @@ import {
 } from 'class-validator';
 
 export class CreateWishlistDto {
+  @IsOptional()
   @IsString()
   @Length(1, 250)
   name: string;
 
+  @IsOptional()
   @IsUrl()
   image: string;
 
   @IsArray()
-  @IsNumber()
   @ArrayNotEmpty()
-  items: number[];
+  itemsId: number[];
 
   @IsOptional()
   @IsString()
   @Max(1500)
-  description?: string;
+  description: string;
 }

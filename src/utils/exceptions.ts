@@ -9,6 +9,9 @@ enum EXCEPTIONS {
   EXCEED_PRICE = 'Взнос превышает оставшуюся стоимость "хотелки"',
   OFFER_NOT_FOUND = 'Заявка не найдена',
   WISHLIST_NOT_FOUND = 'Этого списка "хотелок" не существует или он был удален',
+  WISHLIST_NOT_CREATED = 'Не удалось создать список "хотелок"',
+  WISHLIST_UPDATE_FAILED = 'Не удалось обновить список "хотелок"',
+  WISHLIST_DELETE_FAILED = 'Не удалось удалить список "хотелок"',
   AUTH_FAILED = 'Проверьте логин и пароль',
   UNAUTHORIZED = 'Требуется авторизация',
 }

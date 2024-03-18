@@ -8,7 +8,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Like, Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { HashService } from '../helpers/hash';
 import EXCEPTIONS from '../utils/exceptions';
 import { Wish } from '../wishes/entities/wish.entity';
 
@@ -37,7 +37,7 @@ export class UsersService {
       }
     }
 
-    const password = await bcrypt.hash(createUserDto.password, 8);
+    const password = await HashService.generateHash(createUserDto.password);
 
     const newUser = await this.userRepository.create({
       ...createUserDto,
@@ -93,7 +93,9 @@ export class UsersService {
     }
 
     if (updateUserDto.password) {
-      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 8);
+      updateUserDto.password = await HashService.generateHash(
+        updateUserDto.password,
+      );
     }
 
     const modifiedUserDto: User = {

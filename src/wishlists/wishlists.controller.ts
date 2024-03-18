@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Req,
+  InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
@@ -15,11 +17,11 @@ import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { User } from '../users/entities/user.entity';
 import { AuthUserDto } from '../auth/dto/auth-user.dto';
+import EXCEPTIONS from '../utils/exceptions';
 
-@UseGuards(JwtGuard)
 @Controller('wishlistlists')
 export class WishlistsController {
-  constructor(private readonly wishlistsService: WishlistsService) {}
+  constructor(private wishlistsService: WishlistsService) {}
 
   @UseGuards(JwtGuard)
   @Post()
@@ -27,7 +29,11 @@ export class WishlistsController {
     @Body() createWishlistDto: CreateWishlistDto,
     @Req() req: AuthUserDto,
   ) {
-    return await this.wishlistsService.create(createWishlistDto, req.user);
+    try {
+      return await this.wishlistsService.create(createWishlistDto, req.user);
+    } catch (e) {
+      throw new InternalServerErrorException(EXCEPTIONS.WISHLIST_NOT_CREATED);
+    }
   }
 
   @UseGuards(JwtGuard)
@@ -39,7 +45,11 @@ export class WishlistsController {
   @UseGuards(JwtGuard)
   @Get(':id')
   async findOne(@Param('id') id: number) {
-    return await this.wishlistsService.findOne(id);
+    try {
+      return await this.wishlistsService.findOneById(id);
+    } catch (e) {
+      throw new NotFoundException(EXCEPTIONS.WISHLIST_NOT_FOUND);
+    }
   }
 
   @UseGuards(JwtGuard)
@@ -49,12 +59,20 @@ export class WishlistsController {
     @Body() updateWishlistDto: UpdateWishlistDto,
     @Param() user: User,
   ) {
-    return await this.wishlistsService.update(id, updateWishlistDto, user);
+    try {
+      return await this.wishlistsService.update(id, updateWishlistDto, user);
+    } catch (e) {
+      throw new InternalServerErrorException(EXCEPTIONS.WISHLIST_UPDATE_FAILED);
+    }
   }
 
   @UseGuards(JwtGuard)
   @Delete(':id')
   async remove(@Param('id') id: number, @Req() req: AuthUserDto) {
-    return await this.wishlistsService.remove(id, req.user.id);
+    try {
+      return await this.wishlistsService.remove(id, req.user.id);
+    } catch (e) {
+      throw new InternalServerErrorException(EXCEPTIONS.WISHLIST_DELETE_FAILED);
+    }
   }
 }

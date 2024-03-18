@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { WishesModule } from './wishes/wishes.module';
@@ -33,7 +32,6 @@ import { LocalStrategy } from './auth/strategies/local.strategy';
     OffersModule,
     AuthModule,
   ],
-  controllers: [AppController],
   providers: [LocalStrategy],
 })
 export class AppModule {}

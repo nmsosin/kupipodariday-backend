@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -16,16 +17,27 @@ import EXCEPTIONS from '../utils/exceptions';
 export class WishlistsService {
   constructor(
     @InjectRepository(Wishlist)
-    private readonly wishlistsRepository: Repository<Wishlist>,
-    private readonly wishesService: WishesService,
+    private wishlistsRepository: Repository<Wishlist>,
+    private wishesService: WishesService,
   ) {}
   async create(createWishlistDto: CreateWishlistDto, user: User) {
-    const wishes = await this.wishesService.findMany(createWishlistDto.items);
+    const wishes = await this.wishesService.findMany(createWishlistDto.itemsId);
+
+    if (!wishes) {
+      throw new NotFoundException(EXCEPTIONS.WISH_NOT_FOUND);
+    }
+
     const newWishlist = this.wishlistsRepository.create({
       ...createWishlistDto,
       items: wishes,
       owner: user,
+      description: 'Коллекция',
     });
+
+    if (!newWishlist) {
+      throw new BadRequestException(EXCEPTIONS.WISHLIST_NOT_CREATED);
+    }
+
     return await this.wishlistsRepository.save(newWishlist);
   }
 
@@ -35,15 +47,21 @@ export class WishlistsService {
     });
   }
 
-  async findOne(id: number) {
-    return await this.wishlistsRepository.findOne({
+  async findOneById(id: number) {
+    const wishlist = await this.wishlistsRepository.findOne({
       where: { id },
       relations: ['owner', 'items'],
     });
+
+    if (!wishlist) {
+      throw new NotFoundException(EXCEPTIONS.WISHLIST_NOT_FOUND);
+    }
+
+    return wishlist;
   }
 
   async update(id: number, updateWishlistDto: UpdateWishlistDto, user: User) {
-    const currentWishlist = await this.findOne(id);
+    const currentWishlist = await this.findOneById(id);
 
     if (!currentWishlist) {
       throw new NotFoundException(EXCEPTIONS.WISHLIST_NOT_FOUND);
@@ -65,7 +83,7 @@ export class WishlistsService {
   }
 
   async remove(id: number, userId: number) {
-    const currentWishlist = await this.findOne(id);
+    const currentWishlist = await this.findOneById(id);
 
     if (!currentWishlist) {
       throw new NotFoundException(EXCEPTIONS.WISHLIST_NOT_FOUND);
